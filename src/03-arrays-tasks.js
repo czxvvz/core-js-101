@@ -293,7 +293,7 @@ function toArrayOfSquares(arr) {
 function getMovingSum(arr) {
   function odds(array) {
     return array.reduce((carry, current) => {
-      if (carry?.length !== 0) {
+      if (carry.length !== 'undefined' && carry.length !== 0) {
         carry.push(current + carry[carry.length - 1]);
       } else {
         carry.push(current);
@@ -529,13 +529,13 @@ function toStringList(arr) {
 function sortCitiesArray(arr) {
   function compare(a, b) {
     let x;
-    if (a?.country > b?.country) {
+    if (a.country > b.country) {
       x = 1;
-    } else if (a?.country < b?.country) {
+    } else if (a.country < b.country) {
       x = -1;
-    } else if (a?.city > b?.city) {
+    } else if (a.city > b.city) {
       x = 1;
-    } else if (a?.city < b?.city) {
+    } else if (a.city < b.city) {
       x = -1;
     } else {
       x = 0;
@@ -700,7 +700,7 @@ function selectMany(arr, childrenSelector) {
 function getElementByIndexes(arr, indexes) {
   function a(array, index) {
     let x = null;
-    if (index?.length > 0) {
+    if (index.length !== 'undefined' && index.length > 0) {
       x = a(array[index.shift()], index);
     }
     return (x === null) ? array : x;
