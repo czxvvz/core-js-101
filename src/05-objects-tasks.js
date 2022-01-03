@@ -20,10 +20,16 @@
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-function Rectangle(/* width, height */) {
-  throw new Error('Not implemented');
+function Rectangle(width, height) {
+  const r = {
+    width,
+    height,
+    getArea() {
+      return width * height;
+    },
+  };
+  return r;
 }
-
 
 /**
  * Returns the JSON representation of specified object
@@ -35,8 +41,8 @@ function Rectangle(/* width, height */) {
  *    [1,2,3]   =>  '[1,2,3]'
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
-function getJSON(/* obj */) {
-  throw new Error('Not implemented');
+function getJSON(obj) {
+  return JSON.stringify(obj);
 }
 
 
@@ -51,8 +57,10 @@ function getJSON(/* obj */) {
  *    const r = fromJSON(Circle.prototype, '{"radius":10}');
  *
  */
-function fromJSON(/* proto, json */) {
-  throw new Error('Not implemented');
+function fromJSON(proto, json) {
+  const a = Object.create(proto);
+  Object.assign(a, JSON.parse(json));
+  return a;
 }
 
 
@@ -111,32 +119,143 @@ function fromJSON(/* proto, json */) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  isBasic: true,
+  nameEl: '',
+  nameID: '',
+  nameCl: [],
+  nameAt: [],
+  namePC: [],
+  namePE: '',
+  clear() {
+    const b = {};
+    Object.assign(b, this);
+    b.nameEl = '';
+    b.nameID = '';
+    b.nameCl = [];
+    b.nameAt = [];
+    b.namePC = [];
+    b.namePE = '';
+    b.isBasic = false;
+    return b;
+  },
+  element(value) {
+    let a = this;
+    if (a.isBasic === true) {
+      a = this.clear();
+    }
+    if (a.nameEl !== '') {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    if (a.namePE !== '' || a.namePC?.length !== 0 || a.nameAt?.length !== 0
+    || a.nameCl?.length !== 0 || a.nameID !== '') {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    a.nameEl = value;
+    return a;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    let a = this;
+    if (a.isBasic === true) {
+      a = this.clear();
+    }
+    if (a.nameID !== '') {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    if (a.namePE !== '' || a.namePC?.length !== 0 || a.nameAt?.length !== 0
+    || a.nameCl?.length !== 0) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    a.nameID = value;
+    return a;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    let a = this;
+    if (a.isBasic === true) {
+      a = this.clear();
+    }
+    if (a.namePE !== '' || a.namePC?.length !== 0 || a.nameAt?.length !== 0) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    a.nameCl.push(value);
+    return a;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    let a = this;
+    if (a.isBasic === true) {
+      a = this.clear();
+    }
+    a.nameAt.push(value);
+    if (a.namePE !== '' || a.namePC?.length !== 0) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    return a;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    let a = this;
+    if (a.isBasic === true) {
+      a = this.clear();
+    }
+    if (a.namePE !== '') {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    a.namePC.push(value);
+    return a;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    let a = this;
+    if (a.isBasic === true) {
+      a = this.clear();
+    }
+    if (a.namePE !== '') {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    a.namePE = value;
+    return a;
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    const x = {
+      a: selector1,
+      b: combinator,
+      c: selector2,
+      stringify() {
+        return `${selector1.stringify()} ${combinator} ${selector2.stringify()}`;
+      },
+    };
+    return x;
+  },
+  stringify() {
+    let str = '';
+    if (this.nameEl !== '') {
+      str += this.nameEl;
+    }
+    if (this.nameID !== '') {
+      str += `#${this.nameID}`;
+    }
+    for (let i = 0; i < this.nameCl.length; i += 1) {
+      str += `.${this.nameCl[i]}`;
+    }
+    for (let i = 0; i < this.nameAt.length; i += 1) {
+      str += `[${this.nameAt[i]}]`;
+    }
+    for (let i = 0; i < this.namePC.length; i += 1) {
+      str += `:${this.namePC[i]}`;
+    }
+    if (this.namePE !== '') {
+      str += `::${this.namePE}`;
+    }
+    this.nameEl = '';
+    this.nameID = '';
+    this.nameCl = [];
+    this.nameAt = [];
+    this.namePC = [];
+    this.namePE = '';
+    return str;
   },
 };
 
