@@ -28,8 +28,18 @@
  *      .catch((error) => console.log(error.message)) // 'Error: Wrong parameter is passed!
  *                                                    //  Ask her again.';
  */
-function willYouMarryMe(/* isPositiveAnswer */) {
-  throw new Error('Not implemented');
+function willYouMarryMe(isPositiveAnswer) {
+  return new Promise((resolve, reject) => {
+    if (typeof (isPositiveAnswer) === 'boolean') {
+      if (isPositiveAnswer) {
+        resolve('Hooray!!! She said "Yes"!');
+      } else {
+        resolve('Oh no, she said "No".');
+      }
+    } else {
+      reject(new Error('Wrong parameter is passed! Ask her again.'));
+    }
+  });
 }
 
 
@@ -48,8 +58,8 @@ function willYouMarryMe(/* isPositiveAnswer */) {
  *    })
  *
  */
-function processAllPromises(/* array */) {
-  throw new Error('Not implemented');
+function processAllPromises(array) {
+  return Promise.all(array);
 }
 
 /**
@@ -71,8 +81,8 @@ function processAllPromises(/* array */) {
  *    })
  *
  */
-function getFastestPromise(/* array */) {
-  throw new Error('Not implemented');
+function getFastestPromise(array) {
+  return Promise.race(array);
 }
 
 /**
@@ -92,8 +102,37 @@ function getFastestPromise(/* array */) {
  *    });
  *
  */
-function chainPromises(/* array, action */) {
-  throw new Error('Not implemented');
+function chainPromises(array, action) {
+  function a(el, result) {
+    let sum = el;
+    if (typeof (sum) === 'undefined' || sum === null) {
+      sum = result;
+    } else {
+      sum = action(sum, result);
+    }
+    return sum;
+  }
+  let sum = null;
+  async function b(i) {
+    let x = 0;
+    try {
+      sum = a(sum, await array[i]);
+    } catch (err) {
+      if (array.length - 1 > i) {
+        x = await b(i + 1);
+      } else {
+        x = sum;
+      }
+      return x;
+    }
+    if (array.length - 1 > i) {
+      x = await b(i + 1);
+    } else {
+      x = sum;
+    }
+    return x;
+  }
+  return b(0);
 }
 
 module.exports = {
