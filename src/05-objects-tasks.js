@@ -146,8 +146,9 @@ const cssSelectorBuilder = {
     if (a.nameEl !== '') {
       throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
     }
-    if (a.namePE !== '' || a.namePC?.length !== 0 || a.nameAt?.length !== 0
-    || a.nameCl?.length !== 0 || a.nameID !== '') {
+    if (a.namePE !== '' || (a.namePC !== 'undefined' && a.namePC.length !== 0)
+    || (a.nameAt.length !== 'undefined' && a.nameAt.length !== 0)
+    || (a.nameCl.length !== 'undefined' && a.nameCl.length !== 0) || a.nameID !== '') {
       throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
     }
     a.nameEl = value;
@@ -162,8 +163,9 @@ const cssSelectorBuilder = {
     if (a.nameID !== '') {
       throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
     }
-    if (a.namePE !== '' || a.namePC?.length !== 0 || a.nameAt?.length !== 0
-    || a.nameCl?.length !== 0) {
+    if (a.namePE !== '' || (a.namePC !== 'undefined' && a.namePC.length !== 0)
+    || (a.nameAt.length !== 'undefined' && a.nameAt.length !== 0)
+    || (a.nameCl.length !== 'undefined' && a.nameCl.length !== 0)) {
       throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
     }
     a.nameID = value;
@@ -175,7 +177,8 @@ const cssSelectorBuilder = {
     if (a.isBasic === true) {
       a = this.clear();
     }
-    if (a.namePE !== '' || a.namePC?.length !== 0 || a.nameAt?.length !== 0) {
+    if (a.namePE !== '' || (a.namePC !== 'undefined' && a.namePC.length !== 0)
+    || (a.nameAt.length !== 'undefined' && a.nameAt.length !== 0)) {
       throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
     }
     a.nameCl.push(value);
@@ -188,7 +191,7 @@ const cssSelectorBuilder = {
       a = this.clear();
     }
     a.nameAt.push(value);
-    if (a.namePE !== '' || a.namePC?.length !== 0) {
+    if (a.namePE !== '' || (a.namePC !== 'undefined' && a.namePC.length !== 0)) {
       throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
     }
     return a;
